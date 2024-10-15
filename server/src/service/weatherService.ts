@@ -1,6 +1,8 @@
+// imports
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Makes interface for coordinates
 interface Coordinates {
   name: string;
   lat: number;
@@ -9,6 +11,7 @@ interface Coordinates {
   state: string;
 }
 
+// Weather class
 class Weather {
   city: string;
   date: string;
@@ -18,6 +21,7 @@ class Weather {
   icon: string;
   description: string;
 
+  // Constructor
   constructor(city: string, date: string, tempF: number, windSpeed: number, humidity: number, icon: string, description: string) {
     this.city = city;
     this.date = date;
@@ -28,15 +32,20 @@ class Weather {
     this.description = description;
   }
 }
+
+// Create WeatherService class
 class WeatherService {
   private baseURL?: string;
   private apiKey?: string;
+
+  // City name is for the location data
   private cityName = '';
   constructor() {
     this.baseURL = process.env.API_BASE_URL || '';
     this.apiKey = process.env.API_KEY || '';
   }
 
+  // Fetches location data and throws error.
   private async fetchLocationData(query: string) {
     try {
       if (!this.baseURL || !this.apiKey) {
@@ -54,6 +63,7 @@ class WeatherService {
     }
   }
 
+  // Destructure location data if the location is not found. 
   private destructureLocationData(locationData: Coordinates): Coordinates {
     if (!locationData) {
       throw new Error('City not found, please enter another.');
@@ -64,18 +74,23 @@ class WeatherService {
     return {name, lat, lon, country, state,};
   }
 
+  // Build geocode query
   private buildGeocodeQuery(): string {
     return `${this.baseURL}/geo/1.0/direct?q=${this.cityName}&limit=1&appid=${this.apiKey}`;
   }
 
+  // Build weather query
   private buildWeatherQuery(coordinates: Coordinates): string {
     return `${this.baseURL}/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&units=imperial&appid=${this.apiKey}`;
   }
 
+  // This will fetch and destructure location data
   private async fetchAndDestructureLocationData() {
     return await this.fetchLocationData(this.buildGeocodeQuery()).then((data) => this.destructureLocationData(data));
   }
 
+  // This is the function that will actually fetch the weather data/
+  // It will parse the current weather and build the forecast array.
   private async fetchWeatherData(coordinates: Coordinates) {
     try {
       const response = await fetch(this.buildWeatherQuery(coordinates)).then((res) => res.json());
@@ -93,6 +108,7 @@ class WeatherService {
     }
   }
   
+  // Parses the weather from the certain data from API.
   private parseCurrentWeather(response: any) {
 
     const weatherCurrent = new Weather(
@@ -108,6 +124,8 @@ class WeatherService {
     return weatherCurrent;
   }
 
+  // This will loop through all the weather data and build the forecast array.
+  // 5 day forecast/
   private buildForecastArray(currentWeather: Weather, weatherData: any[]) {
     const weatherForecast: Weather[] = [currentWeather];
 
@@ -134,6 +152,7 @@ class WeatherService {
   }
 
 
+  // This will get the weather for each city. Will throw erorr if not found.
   async getWeatherForCity(cityName: string) {
     try {
       this.cityName = cityName;
@@ -151,4 +170,5 @@ class WeatherService {
   }
 }
 
+// Export the WeatherService class
 export default new WeatherService();
