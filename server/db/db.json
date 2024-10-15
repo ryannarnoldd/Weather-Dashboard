@@ -1,10 +1,18 @@
 [
 	{
 		"name": "New Paltz",
-		"id": "5550e6db-a9b2-4e2a-9e6f-e1cc1b0a71d6"
+		"id": "022954793"
 	},
 	{
-		"name": "Windermere",
-		"id": "d4859f25-2dc4-41e6-b9fb-ab34b2469488"
+		"name": "Windemere",
+		"id": "301450862"
+	},
+	{
+		"name": "San Diego, CA",
+		"id": "089602752"
+	},
+	{
+		"name": "San Diego",
+		"id": "908982837"
 	}
 ]
