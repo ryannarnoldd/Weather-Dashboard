@@ -139,6 +139,7 @@ class WeatherService {
       weatherForecast.push(
         new Weather(
           this.cityName,
+          // uses the date
           date,
           day.main.temp,
           day.wind.speed,
